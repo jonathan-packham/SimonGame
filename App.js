@@ -1,140 +1,145 @@
 import {StatusBar} from 'expo-status-bar';
-import React, {Component} from 'react'; 
-import {Button, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React, {Component} from 'react';
+import {Button, StyleSheet, TouchableOpacity, View} from 'react-native';
 
-class redLight extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      color: 'red',
+class Light extends Component {
+    constructor(props) {
+        super(props);
     }
-  }
 
-  render() {
-    return (
-      <TouchableOpacity
-        style={[styles.light, {backgroundColor: this.props.color}]}
-      />
-    )
-  }
-}
-
-class blueLight extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      color: 'blue',
+    render() {
+        return (
+            <TouchableOpacity
+                style={[styles.light, {backgroundColor: this.props.color}]}
+            />
+        )
     }
-  }
-
-  render() {
-    <TouchableOpacity
-      style={[styles.light, {backgroundColor: this.state.color}]}
-    />
-  }
-}
-
-class greenLight extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      color: 'green',
-    }
-  }
-
-  render() {
-    <TouchableOpacity
-      style={[styles.light, {backgroundColor: this.state.color}]}
-    />
-  }
-}
-
-class yellowLight extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      color: 'yellow',
-    }
-  }
-
-  render() {
-    <TouchableOpacity
-      style={[styles.light, {backgroundColor: this.state.color}]}
-    />
-  }
 }
 
 export default class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      timesToBlink: 1,
-      durationMS: 1000,
-      startEnabled: true,
-      lightColor: 'orange',
+    constructor(props) {
+        super(props);
+        this.state = {
+            timesToBlink: 1,
+            durationMS: 1000,
+            startEnabled: true,
+            lightToBlink: 0,
+            blinkSeq: '',
+            playerSeq: '',
+            blueLight: 'blue',
+            greenLight: 'green',
+            redLight: 'red',
+            yellowLight: 'gold',
+        }
     }
-  }
 
-  scheduler = (count) => {
-    if (count > 0) {
-      //blink and callback
-      this.blink(this.scheduler.bind(this, --count));
-    } else {
-      this.setState({startEnabled: true});
+    play() {
+        for (var i=0; i < this.timesToBlink; i++) {
+            this.lightToBlink.push(Math.floor(Math.random() * 4) + 1);
+        }
+        this.blinkButton(this.state.lightToBlink)
+        this.blinkSeq.push(this.state.lightToBlink)
+        this.setState({startEnabled: true})
     }
-  }
+    
+    blinkButton(colorToBlink) {
+        if (colorToBlink == 1) {
+            this.blueBlink();
+        }
+        if (colorToBlink == 2) {
+            this.greenBlink();
+        }
+        if (colorToBlink == 3) {
+            this.redBlink();
+        }
+        if (colorToBlink == 4) {
+            this.yellowBlink();
+        }
+    }
 
-  blink(callback) {
-    setTimeout(() => {
-      //turn light on, then off
-      setTimeout(() => {
-        //turn off
-        this.setState({lightcolor: this.props.color});
-        if (callback) callback(); //call next
-      }, this.state.durationMS);
-    }, this.state.durationMS);
-  }
+    blueBlink() {
+        setTimeout(() => {
+            this.setState({blueLight: 'cornflowerblue'});
+            setTimeout(() => {
+                this.setState({blueLight: 'blue'});
+            }, durationMS);
+        }, durationMS);
+    }
 
-  start = () => {
-    this.setState({startEnabled: false});
-    this.scheduler(this.state.timesToBlink);
-  }
+    greenBlink() {
+        setTimeout(() => {
+            this.setState({greenLight: 'lawngreen'});
+            setTimeout(() => {
+                this.setState({greenLight: 'green'});
+            }, durationMS);
+        }, durationMS);
+    }
 
-  render() {
-    return (
-      <View style={styles.container}>
-        <View style={styles.simonLook}>
-          <View style={styles.btnContainer}>
-            <redLight color={this.state.lightColor} />
-          </View>
-        </View>
-      </View>
-    )
-  }
+    redBlink() {
+        setTimeout(() => {
+            this.setState({redLight: 'indianred'});
+            setTimeout(() => {
+                this.setState({redLight: 'red'});
+            }, durationMS);
+        }, durationMS);
+    }
+
+    yellowBlink() {
+        setTimeout(() => {
+            this.setState({yellowLight: 'yellow'});
+            setTimeout(() => {
+                this.setState({yellowLight: 'gold'})
+            })
+        })
+    }
+
+    start = () => {
+        this.setState({startEnabled: false});
+        this.play;
+    }
+
+    render() {
+        return (
+            <View style={styles.container}>
+                <StatusBar style="auto" /> 
+                <View style={styles.simonLook}>
+                    <View style={styles.btnContainer}>
+                        <Light color={this.state.blueLight} />
+                        <Light color={this.state.greenLight} />
+                    </View>
+                    <View style={styles.btnContainer}>
+                        <Light color={this.state.redLight} />
+                        <Light color={this.state.yellowLight} />
+                    </View>
+                    {this.state.startEnabled && <Button title="Start" onPress={this.start} />}
+                </View>
+            </View>
+        )
+    }
 }
 
 const styles = StyleSheet.create({
-  btnContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  light: {
-    width: 100,
-    height: 100,
-    borderRadius: 20,
-  },
-  simonLook: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 20,
-    borderWidth: 5,
-    backgroundColor: 'black',
-  },
+    btnContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    container: {
+        flex: 1,
+        backgroundColor: '#fff',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    light: {
+        width: 100,
+        height: 100,
+        borderRadius: 20,
+    },
+    simonLook: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 20,
+        borderWidth: 5,
+        backgroundColor: 'black',
+    },
 });
